@@ -1,10 +1,25 @@
 services:
   web-app:
-    context: .
+    build:
+      context: .
+      dockerfile: Containerfile
+    ports:
+      - "8080:80"
 
   database:
-    image: mariadb
+    image: docker.io/library/mariadb:latest
+    container_name: dev-mariadb
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: 1234567
+      MARIADB_ROOT_PASSWORD: __test__1234
+      MARIADB_DATABASE: shopfront_db
+      MARIADB_USER: shopfront
+      MARIADB_PASSWORD: __test__1234
+    ports:
+      - "3306:3306"
+    volumes:
+      - mariadb-data:/var/lib/mysql:Z
 
+volumes:
+  mariadb-data:
+    

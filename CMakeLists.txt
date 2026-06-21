@@ -1,7 +1,5 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 project(shopfront CXX)
-
-set(BUILD_EXAMPLES OFF)
 
 include(CheckIncludeFileCXX)
 
@@ -26,9 +24,16 @@ add_executable(${PROJECT_NAME} main.cc)
 # ##############################################################################
 # If you include the drogon source code locally in your project, use this method
 # to add drogon 
-add_subdirectory(drogon) 
-add_subdirectory(yaml-cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE drogon yaml-cpp)
+
+# Disable Drogon buildling examples
+set(BUILD_EXAMPLES OFF CACHE BOOL "Disable dependency examples" FORCE)
+
+# Add Drogon itself
+add_subdirectory(drogon)
+
+# Link Drogon to MainProject
+target_link_libraries(${PROJECT_NAME} PRIVATE drogon)
+
 #
 # and comment out the following lines
 #find_package(Drogon CONFIG REQUIRED)
