@@ -22,6 +22,9 @@ int main(int argc, char** argv)
 	drogon::app().loadConfigFile("../config.yaml");
 	// Run HTTP framework,the method will block in the internal event loop
 	LOG_INFO << "Shopfront starting";/* on port " << port;*/
+#ifdef ENABLE_DEBUG_SHOPFRONT
+	LOG_WARNING << "DEBUG MODE ENABLED";
+#endif
 	drogon::app().run();
 
 	return EXIT_SUCCESS;

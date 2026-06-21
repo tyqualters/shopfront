@@ -13,6 +13,11 @@ public:
 	METHOD_ADD(api::JsonOk, "", Get);
 	METHOD_ADD(api::JsonOk, "/", Get);
 
+#ifdef ENABLE_DEBUG_SHOPFRONT
+	// List Users
+	METHOD_ADD(api::ListUsersDevOnly, "/list-users", Get);
+#endif
+
 	// User Registration
 	METHOD_ADD(api::JsonOk, "/register", Get, Post);
 	
@@ -33,6 +38,9 @@ public:
 
 	METHOD_LIST_END
 	
+	// Normal routes
 	void JsonOk(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback);
-
+	
+	// Dev only routes
+	void ListUsersDevOnly(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
 };
