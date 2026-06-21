@@ -24,7 +24,7 @@ Fetch [Drogon](https://github.com/drogonframework/drogon) and its dependencies: 
 
 To build a release version of this project, run: `./run`
 
-If you are a developer on Linux, just use: `./rundev`
+If you are a developer on Linux, just use: `podman-compose up -d database` and `./rundev`
 
 **Not tested on Windows or Mac.**
 

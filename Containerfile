@@ -8,7 +8,7 @@ WORKDIR /app
 RUN apt-get update -y
 
 # Pre-requisites
-RUN apt install git gcc g++ cmake libjsoncpp-dev uuid-dev zlib1g-dev openssl libssl-dev libyaml-cpp-dev -y
+RUN apt install git gcc g++ cmake libjsoncpp-dev uuid-dev zlib1g-dev openssl libssl-dev libyaml-cpp-dev libmariadb-dev-compat libmariadb-dev -y
 
 # Drogon
 RUN git clone https://github.com/drogonframework/drogon drogon --recursive

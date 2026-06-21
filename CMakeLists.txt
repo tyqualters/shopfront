@@ -27,6 +27,7 @@ add_executable(${PROJECT_NAME} main.cc)
 
 # Disable Drogon buildling examples
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable dependency examples" FORCE)
+set(USE_MYSQL ON CACHE BOOL "Enable Mysql" FORCE)
 
 # Add Drogon itself
 add_subdirectory(drogon)
@@ -81,3 +82,4 @@ target_sources(${PROJECT_NAME}
 # ##############################################################################
 
 #add_subdirectory(test)
+
