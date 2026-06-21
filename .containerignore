@@ -1,0 +1,5 @@
+# .containerignore
+build/
+drogon/
+yaml-cpp/
+Containerfile
