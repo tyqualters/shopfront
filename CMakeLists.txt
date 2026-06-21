@@ -19,6 +19,10 @@ endif ()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+if (ENABLE_DEBUG_SHOPFRONT)
+	message(WARNING "Shopfront Debug Mode Enabled")
+	add_compile_definitions(-DENABLE_DEBUG_SHOPFRONT)	
+endif ()
 add_executable(${PROJECT_NAME} main.cc)
 
 # ##############################################################################
