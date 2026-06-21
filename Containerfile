@@ -21,8 +21,7 @@ COPY . .
 
 # Build Project
 RUN mkdir build
-RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
-EXPOSE 5555
+EXPOSE 80
 
 CMD ["./run"]

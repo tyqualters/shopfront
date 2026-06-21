@@ -1,0 +1,10 @@
+services:
+  web-app:
+    context: .
+
+  database:
+    image: mariadb
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: 1234567
+
