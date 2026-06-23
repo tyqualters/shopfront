@@ -16,10 +16,12 @@ public:
 #ifdef ENABLE_DEBUG_SHOPFRONT
 	// List Users
 	METHOD_ADD(api::ListUsersDevOnly, "/list-users", Get);
+	// To SHA-256
+	METHOD_ADD(api::ToSha256, "/sha256?message={}", Get);
 #endif
 
 	// User Registration
-	METHOD_ADD(api::JsonOk, "/register", Get, Post);
+	METHOD_ADD(api::JsonOk, "/register", Post);
 	
 	// User Authentication
 	METHOD_ADD(api::JsonOk, "/login", Get, Post);
@@ -40,7 +42,12 @@ public:
 	
 	// Normal routes
 	void JsonOk(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback);
-	
+
 	// Dev only routes
-	void ListUsersDevOnly(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
+	drogon::Task<HttpResponsePtr> ListUsersDevOnly(HttpRequestPtr req);
+	void ToSha256(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback, std::string message);
+
+	/*	OLD CALLBACK VERSIONS FOR REFERENCE	*/	
+	// void ListUsersDevOnly(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
+	// void CreateUser(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
 };

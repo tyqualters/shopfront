@@ -19,6 +19,8 @@ endif ()
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 if (ENABLE_DEBUG_SHOPFRONT)
 	message(WARNING "Shopfront Debug Mode Enabled")
 	add_compile_definitions(-DENABLE_DEBUG_SHOPFRONT)	
