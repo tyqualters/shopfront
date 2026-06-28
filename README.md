@@ -7,8 +7,9 @@ Deployable eShops (SaaS)
 - [x] Create Drogon Project
 - [x] Set up build config
 - [x] Set up Containerfile
+- [x] Connect MariaDB to Drogon
 - [ ] **TODO** Build endpoint routes
-- [ ] **TODO** Connect MariaDB to Drogon
+- [x] Set up user registration
 - [ ] Connect Redis to Drogon
 - [ ] Build the frontend (React)
 - [ ] Set up user authentication

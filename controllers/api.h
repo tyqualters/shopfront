@@ -21,7 +21,7 @@ public:
 #endif
 
 	// User Registration
-	METHOD_ADD(api::JsonOk, "/register", Post);
+	METHOD_ADD(api::CreateUser, "/register", Post);
 	
 	// User Authentication
 	METHOD_ADD(api::JsonOk, "/login", Get, Post);
@@ -41,7 +41,8 @@ public:
 	METHOD_LIST_END
 	
 	// Normal routes
-	void JsonOk(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback);
+	void JsonOk(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
+	drogon::Task<HttpResponsePtr> CreateUser(HttpRequestPtr req);
 
 	// Dev only routes
 	drogon::Task<HttpResponsePtr> ListUsersDevOnly(HttpRequestPtr req);
