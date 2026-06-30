@@ -1,3 +1,5 @@
+# Resource: https://geshan.com.np/blog/2022/01/redis-docker/
+
 services:
   web-app:
     build:
@@ -5,6 +7,9 @@ services:
       dockerfile: Containerfile
     ports:
       - "8080:80"
+    depends_on:
+      - database
+      - cache
 
   database:
     image: docker.io/library/mariadb:latest
@@ -20,6 +25,22 @@ services:
     volumes:
       - mariadb-data:/var/lib/mysql:Z
 
+  cache:
+    image: docker.io/library/redis:latest
+    container_name: dev-redis
+    restart: always
+    environment:
+      REDIS_DB: 0
+      REDIS_HOST: shopfront_cache
+      REDIS_PASSWORD: __test__1234
+      REDIS_PORT: 6379
+    ports:
+      - "6379:6379"
+    volumes:
+      - cache:/data
+
 volumes:
   mariadb-data:
-    
+    driver: local 
+  cache:
+    driver: local
