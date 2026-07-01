@@ -5,7 +5,7 @@ include(CheckIncludeFileCXX)
 include(FetchContent)
 
 # C/C++ Settings
-set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_CXX_STANDARD 23) # Using C++23 instead of C++26 due to GitHub Actions
 set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
