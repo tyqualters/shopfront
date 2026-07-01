@@ -9,6 +9,56 @@
 // 
 // --------------------------------------------------------------
 
+drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
+{
+
+	using namespace drogon_model::shopfront_db;
+
+	auto client = GetClient();
+
+	drogon::orm::CoroMapper<Users> mp(client);
+
+	try
+	{
+		std::string username = req->getParameter("username"); 
+		std::string password = req->getParameter("password"); 
+		
+		if (username.empty() || password.empty()) throw std::invalid_argument("Invalid User or Pass");
+		
+		Users user = co_await mp.findOne({Users::Cols::_userName, orm::CompareOperator::EQ, username});
+		
+		if (user.getValueOfUserpass() == password)
+		{
+			Json::Value ret;
+			ret["result"] = "ok";
+			ret["message"] = "Authentication successful.";
+
+			co_return drogon::HttpResponse::newHttpJsonResponse(
+				ret	
+			);
+		} else throw std::invalid_argument("Invalid User or Pass");
+	}
+	catch (const drogon::orm::DrogonDbException &e)
+	{
+		LOG_ERROR << "Error: " << e.base().what();
+
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			JsonStandardError()
+		);
+	}
+	catch(...)
+	{
+
+		Json::Value ret;
+		ret["result"] = "nok";
+		ret["message"] = "Username or Password invalid";
+
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			ret	
+		);
+	}
+}
+
 drogon::Task<HttpResponsePtr> api::CreateUser(HttpRequestPtr req)
 {
 	using namespace drogon_model::shopfront_db;

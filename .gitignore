@@ -1,6 +1,6 @@
 # Modified
-/drogon
-/yaml-cpp
+/drogon_ctl
+/redli
 /build
 /ssl
 /.env

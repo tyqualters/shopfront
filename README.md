@@ -10,12 +10,13 @@ Deployable eShops (SaaS)
 - [x] Set up build config
 - [x] Set up Containerfile
 - [x] Connect MariaDB to Drogon
-- [ ] **TODO** Build endpoint routes
 - [x] Set up user registration
-- [ ] Connect Redis to Drogon
-- [ ] Env vars for DBs
-- [ ] Build the frontend (React)
+- [x] Connect Redis to Drogon
+- [ ] **WIP:** Build endpoint routes
+- [ ] **WIP:** Build the frontend (React)
+- [ ] **TODO:** Fix dep management + CI
 - [ ] Set up user authentication
+- [ ] Env vars for DBs
 - [ ] ...
 
 ## Tech Stack

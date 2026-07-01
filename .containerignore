@@ -1,5 +1,4 @@
 # .containerignore
-build/
-drogon/
-yaml-cpp/
-Containerfile
+/build/
+/Containerfile
+/redli

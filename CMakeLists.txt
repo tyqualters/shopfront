@@ -1,79 +1,81 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 4.3)
 project(shopfront CXX)
 
 include(CheckIncludeFileCXX)
+include(FetchContent)
 
-check_include_file_cxx(any HAS_ANY)
-check_include_file_cxx(string_view HAS_STRING_VIEW)
-check_include_file_cxx(coroutine HAS_COROUTINE)
-if (NOT "${CMAKE_CXX_STANDARD}" STREQUAL "")
-    # Do nothing
-elseif (HAS_ANY AND HAS_STRING_VIEW AND HAS_COROUTINE)
-    set(CMAKE_CXX_STANDARD 20)
-elseif (HAS_ANY AND HAS_STRING_VIEW)
-    set(CMAKE_CXX_STANDARD 17)
-else ()
-    set(CMAKE_CXX_STANDARD 14)
-endif ()
-
+# C/C++ Settings
+set(CMAKE_CXX_STANDARD 26)
+set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Compile Commands for LSP
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+# Miscellaneous Settings
+set(JWT_BUILD_EXAMPLES OFF CACHE BOOL "disable building examples" FORCE)
+set(BUILD_EXAMPLES OFF CACHE BOOL "Disable dependency examples" FORCE)
+set(USE_MYSQL ON CACHE BOOL "Enable Mysql" FORCE)
+
+# Debug Flag for Development
 if (ENABLE_DEBUG_SHOPFRONT)
 	message(WARNING "Shopfront Debug Mode Enabled")
 	add_compile_definitions(-DENABLE_DEBUG_SHOPFRONT)	
 endif ()
+
+# Project Executable
 add_executable(${PROJECT_NAME} main.cc)
 
-# ##############################################################################
-# If you include the drogon source code locally in your project, use this method
-# to add drogon 
+# Fetch and Add jwt-cpp
+fetchcontent_declare(jwt-cpp 
+    GIT_REPOSITORY https://github.com/Thalhammer/jwt-cpp.git
+    GIT_TAG b0ea29a58fc852a67d4e896d266880c2c63b0c4c # v0.7.2 release
+)
+fetchcontent_makeavailable(jwt-cpp) 
+target_link_libraries(${PROJECT_NAME} PRIVATE jwt-cpp::jwt-cpp)
 
-# Disable Drogon buildling examples
-set(BUILD_EXAMPLES OFF CACHE BOOL "Disable dependency examples" FORCE)
-set(USE_MYSQL ON CACHE BOOL "Enable Mysql" FORCE)
+# Fetch and Add jsoncpp
+fetchcontent_declare(jsoncpp
+    GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp.git
+    GIT_TAG 8519b8381f3c741ad1421f88237b1deda0b11412 # v1.9.8 release
+)
+fetchcontent_makeavailable()
+target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp)
 
-# Add Drogon itself
-add_subdirectory(drogon)
+# Fetch and Add yaml-cpp
+fetchcontent_declare(yaml-cpp 
+    GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
+    GIT_TAG 56e3bb550c91fd7005566f19c079cb7a503223cf # v0.9.0 release
+)
+fetchcontent_makeavailable(yaml-cpp)
+install(TARGETS yaml-cpp EXPORT DrogonTargets)
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
 
-# Link Drogon to MainProject
+# Fetch and Add Drogon
+fetchcontent_declare(drogon 
+    GIT_REPOSITORY https://github.com/drogonframework/drogon.git
+    GIT_TAG 4c5430757ea5451a7c38fbbef4b4bef7dbb47f2f # v1.9.13 release
+)
+fetchcontent_makeavailable(drogon)
 target_link_libraries(${PROJECT_NAME} PRIVATE drogon)
 
-#
-# and comment out the following lines
-#find_package(Drogon CONFIG REQUIRED)
-#target_link_libraries(${PROJECT_NAME} PRIVATE Drogon::Drogon)
-
-# ##############################################################################
-
-if (CMAKE_CXX_STANDARD LESS 17)
-    message(FATAL_ERROR "c++17 or higher is required")
-elseif (CMAKE_CXX_STANDARD LESS 20)
-    message(STATUS "use c++17")
-else ()
-    message(STATUS "use c++20")
-endif ()
-
+# Additional Source Directories 
 aux_source_directory(controllers CTL_SRC)
 aux_source_directory(filters FILTER_SRC)
 aux_source_directory(plugins PLUGIN_SRC)
 aux_source_directory(models MODEL_SRC)
 
+# Generate Drogon Views
 drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
                     ${CMAKE_CURRENT_BINARY_DIR})
-# use the following line to create views with namespaces.
-# drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
-#                     ${CMAKE_CURRENT_BINARY_DIR} TRUE)
-# use the following line to create views with namespace CHANGE_ME prefixed
-# and path namespaces.
-# drogon_create_views(${PROJECT_NAME} ${CMAKE_CURRENT_SOURCE_DIR}/views
-#                     ${CMAKE_CURRENT_BINARY_DIR} TRUE CHANGE_ME)
 
+# Include Database Models
 target_include_directories(${PROJECT_NAME}
                            PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}
                                    ${CMAKE_CURRENT_SOURCE_DIR}/models)
+
+# Add Source Directories to Project
 target_sources(${PROJECT_NAME}
                PRIVATE
                ${SRC_DIR}
@@ -81,11 +83,9 @@ target_sources(${PROJECT_NAME}
                ${FILTER_SRC}
                ${PLUGIN_SRC}
                ${MODEL_SRC})
-# ##############################################################################
-# uncomment the following line for dynamically loading views 
-# set_property(TARGET ${PROJECT_NAME} PROPERTY ENABLE_EXPORTS ON)
 
-# ##############################################################################
-
-#add_subdirectory(test)
-
+# Enable Unit Testing
+if (BUILD_TESTING)
+	message(STATUS "unit testing enabled")
+	add_subdirectory(test)
+endif()
