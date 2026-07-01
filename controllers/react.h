@@ -15,5 +15,7 @@ public:
 	PATH_LIST_BEGIN
 	// list path definitions here;
 	// PATH_ADD("/path", "filter1", "filter2", HttpMethod1, HttpMethod2...);
+	PATH_ADD("/register", Get);
+	PATH_ADD("/test", Get);
 	PATH_LIST_END
 };

@@ -4,6 +4,20 @@
 
 using namespace drogon;
 
+inline auto GetClient()
+{
+	return drogon::app().getFastDbClient("default");
+}
+
+inline const Json::Value JsonStandardError()
+{
+	Json::Value ret;
+	ret["result"] = "nok";
+	ret["message"] = "See internal service logs";
+	
+	return ret;
+}
+
 class api : public drogon::HttpController<api>
 {
 public:

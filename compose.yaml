@@ -32,8 +32,10 @@ services:
     environment:
       REDIS_DB: 0
       REDIS_HOST: shopfront_cache
+      REDIS_USER: shopfront
       REDIS_PASSWORD: __test__1234
       REDIS_PORT: 6379
+    command: ["redis-server", "--user", "default", "off", "--user", "${REDIS_USER}", "on", ">${REDIS_PASSWORD}", "~*", "+@all"]
     ports:
       - "6379:6379"
     volumes:
