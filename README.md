@@ -2,6 +2,8 @@
 
 Deployable eShops (SaaS)
 
+[![CMake CI Build](https://github.com/tyqualters/shopfront/actions/workflows/cmake-single-platform.yml/badge.svg)](https://github.com/tyqualters/shopfront/actions/workflows/cmake-single-platform.yml)
+
 ## Progress
 
 - [x] Create Drogon Project
@@ -29,7 +31,7 @@ Deployable eShops (SaaS)
 
 ## Building
 
-Note: This is a separate project from the frontend project: shopfront-react
+Note: This is a separate project from the frontend project: [Shopfront-React](https://github.com/tyqualters/shopfront-react)
 
 Please see BUILD.md.
 
