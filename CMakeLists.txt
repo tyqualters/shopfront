@@ -40,7 +40,7 @@ fetchcontent_declare(jsoncpp
     GIT_REPOSITORY https://github.com/open-source-parsers/jsoncpp.git
     GIT_TAG 8519b8381f3c741ad1421f88237b1deda0b11412 # v1.9.8 release
 )
-fetchcontent_makeavailable()
+fetchcontent_makeavailable(jsoncpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp)
 
 # Fetch and Add yaml-cpp
