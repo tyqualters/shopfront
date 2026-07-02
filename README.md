@@ -20,6 +20,7 @@ Deployable eShops (SaaS)
 - [ ] Env vars for DBs
 - [ ] Deps build as Static/Shared (not implicit)
 - [ ] ...
+- [ ] Rename project from Shopfront to something else (Trademarked)
 
 ## Tech Stack
 
