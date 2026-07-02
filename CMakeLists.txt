@@ -41,12 +41,7 @@ fetchcontent_declare(jsoncpp
     GIT_TAG 8519b8381f3c741ad1421f88237b1deda0b11412 # v1.9.8 release
 )
 fetchcontent_makeavailable(jsoncpp)
-fetchcontent_getproperties(jsoncpp)
-set(JSONCPP_INCLUDE_DIRS "${jsoncpp_SOURCE_DIR}/include" CACHE INTERNAL "")
-set(JSONCPP_LIBRARIES jsoncpp_lib CACHE INTERNAL "")
-set(Jsoncpp_FOUND TRUE CACHE INTERNAL "")
-set(JSONCPP_FOUND TRUE CACHE INTERNAL "")
-target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_lib)
+target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_static)
 
 # Fetch and Add yaml-cpp
 fetchcontent_declare(yaml-cpp 

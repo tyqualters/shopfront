@@ -12,11 +12,13 @@ Deployable eShops (SaaS)
 - [x] Connect MariaDB to Drogon
 - [x] Set up user registration
 - [x] Connect Redis to Drogon
+- [x] Fix dep management + CI
+- [ ] **TODO:** Add dep cache to GitHub Actions
 - [ ] **WIP:** Build endpoint routes
 - [ ] **WIP:** Build the frontend (React)
-- [ ] **TODO:** Fix dep management + CI
 - [ ] Set up user authentication
 - [ ] Env vars for DBs
+- [ ] Deps build as Static/Shared (not implicit)
 - [ ] ...
 
 ## Tech Stack
@@ -29,6 +31,7 @@ Deployable eShops (SaaS)
 - Podman / Docker
 - Podman-Compose / Docker-Compose
 - Bash/Python (Automation)
+- GitHub Actions (CI)
 
 ## Building
 

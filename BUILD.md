@@ -4,6 +4,8 @@ To build a release version of this project, run: `./run`
 
 If you are a developer on Linux, just use: `podman-compose up -d database` and `./rundev`
 
+Adding the frontend for dev, create a symlink from the frontend build/client directory to the backend: build/public_html.
+
 **Not tested on Windows or Mac.**
 
 ## Deploying
