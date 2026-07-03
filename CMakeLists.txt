@@ -10,16 +10,34 @@ set(CMAKE_C_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# Build Shared Libs
+if (BUILD_SHARED_LIBS)
+	message(STATUS "Build Shared Libs ON")
+else()
+	message(STATUS "Build Shared Libs OFF")
+endif()
+
+# Release Type
+if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+	message(STATUS "Standard Debug Build")
+elseif (CMAKE_BUILD_TYPE STREQUAL "Release")
+	message(STATUS "Standard Release Build")
+endif()
+
 # Compile Commands for LSP
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Miscellaneous Settings
+set(YAML_BUILD_SHARED_LIBS BUILD_SHARED_LIBS CACHE BOOL "Yaml Build Shared Libs" FORCE)
 set(JWT_BUILD_EXAMPLES OFF CACHE BOOL "disable building examples" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable dependency examples" FORCE)
 set(USE_MYSQL ON CACHE BOOL "Enable Mysql" FORCE)
+set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Disable Yaml tests" FORCE)
+set(JSONCPP_WITH_TESTS OFF CACHE BOOL "Disable Json tests" FORCE)
+set(JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE BOOL "Disable Json tests" FORCE)
 
 # Debug Flag for Development
-if (ENABLE_DEBUG_SHOPFRONT)
+if (BUILD_TYPE EQUAL Debug AND ENABLE_DEBUG_SHOPFRONT)
 	message(WARNING "Shopfront Debug Mode Enabled")
 	add_compile_definitions(-DENABLE_DEBUG_SHOPFRONT)	
 endif ()
@@ -41,7 +59,7 @@ fetchcontent_declare(jsoncpp
     GIT_TAG 8519b8381f3c741ad1421f88237b1deda0b11412 # v1.9.8 release
 )
 fetchcontent_makeavailable(jsoncpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_static)
+target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_lib)
 
 # Fetch and Add yaml-cpp
 fetchcontent_declare(yaml-cpp 

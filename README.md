@@ -13,14 +13,15 @@ Deployable eShops (SaaS)
 - [x] Set up user registration
 - [x] Connect Redis to Drogon
 - [x] Fix dep management + CI
-- [ ] **TODO:** Add dep cache to GitHub Actions
+- [x] Deps build as Static/Shared (not implicit)
+- [ ] **PRIORITY:** Set up user authentication
+- [ ] **PRIORITY:** Env vars for DBs
 - [ ] **WIP:** Build endpoint routes
 - [ ] **WIP:** Build the frontend (React)
-- [ ] Set up user authentication
-- [ ] Env vars for DBs
-- [ ] Deps build as Static/Shared (not implicit)
 - [ ] ...
-- [ ] Rename project from Shopfront to something else (Trademarked)
+- [ ] Add relational queries for permissions (IAM)
+- [ ] Come up with an official name for the project 
+- [ ] Add dep cache to GitHub Actions
 
 ## Tech Stack
 

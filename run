@@ -4,5 +4,5 @@ SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
 cd "$SCRIPT_DIR"
 
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_CTL=OFF -DBUILD_TESTING=OFF && make -C build && cd build && exec ./shopfront -p 80
+cmake -S . -B build -DCMAKE_BUILD_TYPE=Release -DBUILD_CTL=OFF -DBUILD_TESTING=OFF && make -C build && cd build && exec ./shopfront $@
 
