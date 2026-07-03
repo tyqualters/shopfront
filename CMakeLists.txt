@@ -62,7 +62,6 @@ fetchcontent_makeavailable(jsoncpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE jsoncpp_lib)
 set(JSONCPP_INCLUDE_DIRS 
     "${jsoncpp_SOURCE_DIR}/include" 
-    "${jsoncpp_BINARY_DIR}/include" 
     CACHE INTERNAL "Jsoncpp include dirs for Drogon"
 )
 set(JSONCPP_LIBRARIES jsoncpp_lib CACHE INTERNAL "Jsoncpp libraries for Drogon")
