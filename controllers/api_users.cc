@@ -9,6 +9,77 @@
 // 
 // --------------------------------------------------------------
 
+
+drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
+{
+	using namespace drogon_model::shopfront_db;
+
+	auto redis = GetRedis();
+
+	auto client = GetClient();
+
+	try
+	{
+		std::string token = req->getCookie("session_token");
+
+		if (token.empty())
+			throw std::runtime_error("No token provided");
+
+		auto transaction = co_await redis->newTransactionCoro();
+		co_await transaction->execCommandCoro("GET %s", token.c_str());
+		auto res = co_await transaction->executeCoro();
+		
+		std::vector<drogon::nosql::RedisResult> redisResults;
+
+		if (res.type() != drogon::nosql::RedisResultType::kArray || (redisResults = res.asArray()).size() == 0)
+			throw std::runtime_error("Transaction failed or returned invalid format");
+
+		if (redisResults[0].type() == drogon::nosql::RedisResultType::kNil || redisResults[0].type() == drogon::nosql::RedisResultType::kError)
+			throw std::runtime_error("Token not found");
+
+		auto uid = redisResults[0].asString();
+
+		LOG_DEBUG << "Whoami Uid: " << uid;
+
+		drogon::orm::CoroMapper<Users> mp(client);
+
+		Users user = co_await mp.findOne({Users::Cols::_userId, orm::CompareOperator::EQ, uid});
+
+		Json::Value ret;
+		ret["result"] = "ok";
+		ret["token"] = token;
+		ret["message"] = "You are: " + user.getValueOfUsername();
+
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			ret	
+		);
+	}
+	catch (const drogon::orm::DrogonDbException &e)
+	{
+		LOG_ERROR << e.base().what();
+
+		Json::Value ret;
+		ret["result"] = "nok";
+		ret["message"] = "Internal service error";
+
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			ret	
+		);
+	}
+	catch (const std::exception &e)
+	{
+		LOG_ERROR << e.what();
+
+		Json::Value ret;
+		ret["result"] = "nok";
+		ret["message"] = "Internal service error";
+
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			ret	
+		);
+	}
+}
+
 drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 {
 
@@ -29,22 +100,49 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 		
 		if (user.getValueOfUserpass() == password)
 		{
+
+			// TODO: Actual security
+			// For now: Generate a UUID, store in Redis with expiration.
+			// Every HTTP request with that UUID therefore = that user auth.
+			
+			// Generate token
+			std::string uuid = drogon::utils::getUuid();
+
+			// Set expiration time
+			constexpr uint32_t expiration = 3600 * 24;
+
+			// Get userId
+			auto uid = user.getValueOfUserid();
+
+			// Get Redis client
+			auto redis = GetRedis();
+
+			// TODO: Check? UUID shouldn't conflict but still.
+			auto transaction = co_await redis->newTransactionCoro();
+    			co_await transaction->execCommandCoro("SET %s %d EX %d", uuid.c_str(), uid, expiration);
+   			co_await transaction->executeCoro();
+
+			// Generate cookie
+			drogon::Cookie authcookie("session_token", uuid);
+			authcookie.setPath("/");
+			authcookie.setExpiresDate(trantor::Date::date().after(expiration));
+			authcookie.setHttpOnly(true);
+			authcookie.setSecure(true);
+
+			// Create response
 			Json::Value ret;
 			ret["result"] = "ok";
+			ret["token"] = uuid;
 			ret["message"] = "Authentication successful.";
 
-			co_return drogon::HttpResponse::newHttpJsonResponse(
+			auto resp = drogon::HttpResponse::newHttpJsonResponse(
 				ret	
 			);
-		} else throw std::invalid_argument("Invalid User or Pass");
-	}
-	catch (const drogon::orm::DrogonDbException &e)
-	{
-		LOG_ERROR << "Error: " << e.base().what();
 
-		co_return drogon::HttpResponse::newHttpJsonResponse(
-			JsonStandardError()
-		);
+			resp->addCookie(authcookie);
+
+			co_return resp;
+		} else throw std::invalid_argument("Invalid User or Pass");
 	}
 	catch(...)
 	{

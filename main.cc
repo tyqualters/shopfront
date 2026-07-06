@@ -14,6 +14,7 @@ int main(int argc, char** argv)
 	// Run HTTP framework,the method will block in the internal event loop
 	LOG_INFO << "Shopfront starting";/* on port " << port;*/
 #ifdef ENABLE_DEBUG_SHOPFRONT
+	trantor::Logger::setLogLevel(trantor::Logger::kDebug);
 	LOG_WARN << "DEBUG MODE ENABLED";
 #endif
 	drogon::app().run();

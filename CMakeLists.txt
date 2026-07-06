@@ -37,7 +37,7 @@ set(JSONCPP_WITH_TESTS OFF CACHE BOOL "Disable Json tests" FORCE)
 set(JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE BOOL "Disable Json tests" FORCE)
 
 # Debug Flag for Development
-if (BUILD_TYPE EQUAL Debug AND ENABLE_DEBUG_SHOPFRONT)
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND ENABLE_DEBUG_SHOPFRONT)
 	message(WARNING "Shopfront Debug Mode Enabled")
 	add_compile_definitions(-DENABLE_DEBUG_SHOPFRONT)	
 endif ()

@@ -9,6 +9,11 @@ inline auto GetClient()
 	return drogon::app().getFastDbClient("default");
 }
 
+inline auto GetRedis()
+{
+	return drogon::app().getFastRedisClient("shopfront_cache");
+}
+
 inline const Json::Value JsonStandardError()
 {
 	Json::Value ret;
@@ -29,16 +34,21 @@ public:
 
 #ifdef ENABLE_DEBUG_SHOPFRONT
 	// List Users
-	METHOD_ADD(api::ListUsersDevOnly, "/list-users", Get);
+	METHOD_ADD(api::ListUsersDevOnly, "/list-users", Get, "login_filter");
 	// To SHA-256
 	METHOD_ADD(api::ToSha256, "/sha256?message={}", Get);
+	// Who Am I?
+	METHOD_ADD(api::Whoami, "/whoami", Get,"login_filter");
 #endif
 
 	// User Registration
-	METHOD_ADD(api::CreateUser, "/register", Post);
+	METHOD_ADD(api::CreateUser, "/register", Post,"no_login_filter");
 	
 	// User Authentication
-	METHOD_ADD(api::AuthenticateUser, "/login", Post);
+	METHOD_ADD(api::AuthenticateUser, "/login", Post, "no_login_filter");
+
+	// TODO: Validate Authentication (or delete cookie and redirect)
+	// METHOD_ADD(api::ValidateUser, "login_filter", Get);
 
 	// Update User, Shop, Product
 	METHOD_ADD(api::JsonOk, "/update", Post);
@@ -61,6 +71,7 @@ public:
 	
 
 	// Dev only routes
+	drogon::Task<HttpResponsePtr> Whoami(HttpRequestPtr req);
 	drogon::Task<HttpResponsePtr> ListUsersDevOnly(HttpRequestPtr req);
 	void ToSha256(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback, std::string message);
 
