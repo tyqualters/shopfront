@@ -9,6 +9,33 @@
 // 
 // --------------------------------------------------------------
 
+drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
+{
+	auto redis = GetRedis();
+
+	drogon::Cookie authcookie("session_token", "invalid");
+	authcookie.setPath("/");
+	authcookie.setMaxAge(0);
+	authcookie.setExpiresDate(trantor::Date(0));
+	authcookie.setHttpOnly(true);
+	authcookie.setSecure(true);	
+
+	if (std::string cookie = req->getCookie("session_token"); !cookie.empty())
+	{
+		auto result = co_await redis->execCommandCoro("UNLINK %s", cookie.c_str());
+		if (result.type() == drogon::nosql::RedisResultType::kError)
+			LOG_ERROR << "Something went wrong with deleting a token from Redis";
+	}
+
+	auto res = HttpResponse::newHttpResponse();
+
+	res->setStatusCode(k302Found);
+	res->addHeader("Location", "/");
+
+	res->addCookie(authcookie);
+
+	co_return res;
+}
 
 drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 {

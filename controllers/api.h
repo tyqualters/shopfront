@@ -47,6 +47,9 @@ public:
 	// User Authentication
 	METHOD_ADD(api::AuthenticateUser, "/login", Post, "no_login_filter");
 
+	// User Signout
+	METHOD_ADD(api::SignoutUser, "/logout", Get, "login_filter");
+
 	// TODO: Validate Authentication (or delete cookie and redirect)
 	// METHOD_ADD(api::ValidateUser, "login_filter", Get);
 
@@ -67,8 +70,8 @@ public:
 	// Normal routes
 	void JsonOk(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
 	drogon::Task<HttpResponsePtr> CreateUser(HttpRequestPtr req);
-	drogon::Task<HttpResponsePtr> AuthenticateUser(HttpRequestPtr req);
-	
+	drogon::Task<HttpResponsePtr> AuthenticateUser(HttpRequestPtr req);	
+	drogon::Task<HttpResponsePtr> SignoutUser(HttpRequestPtr req);
 
 	// Dev only routes
 	drogon::Task<HttpResponsePtr> Whoami(HttpRequestPtr req);
