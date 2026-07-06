@@ -14,11 +14,12 @@ Deployable eShops (SaaS)
 - [x] Connect Redis to Drogon
 - [x] Fix dep management + CI
 - [x] Deps build as Static/Shared (not implicit)
-- [ ] **PRIORITY:** Set up user authentication
+- [x] Set up user authentication (very basic)
 - [ ] **PRIORITY:** Env vars for DBs
 - [ ] **WIP:** Build endpoint routes
 - [ ] **WIP:** Build the frontend (React)
 - [ ] ...
+- [ ] Improve and secure authentication
 - [ ] Add relational queries for permissions (IAM)
 - [ ] Come up with an official name for the project 
 - [ ] Add dep cache to GitHub Actions
