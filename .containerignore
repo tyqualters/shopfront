@@ -1,4 +1,6 @@
 # .containerignore
-/build/
+/build
 /Containerfile
 /redli
+/drogon_ctl
+/.compile_commands.json

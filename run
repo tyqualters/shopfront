@@ -50,5 +50,18 @@ if [[ ! -d "$BUILD_DIR/ssl" ]]; then
 	fi
 fi
 
+# Add compile_commands.json
+if [[ -f "$BUILD_DIR/compile_commands.json" ]]; then
+	if [[ -L "$SCRIPT_DIR/compile_commands.json" && ! "$SCRIPT_DIR/compile_commands.json" -ef "$BUILD_DIR/compile_commands.json" ]]; then
+		rm -f "$SCRIPT_DIR/compile_commands.json"
+		ln -s "$BUILD_DIR/compile_commands.json" "$SCRIPT_DIR/compile_commands.json"
+	elif [[ ! -L "$SCRIPT_DIR/compile_commands.json" ]]; then
+		ln -s "$BUILD_DIR/compile_commands.json" "$SCRIPT_DIR/compile_commands.json"
+	fi
+else
+	echo Cannot find compile_commands.json in build files >&2
+fi
+
 # Execute the program
-(set -a; eval "$(./env.sh .env)"; set +a; exec env -C "$BUILD_DIR" ./shopfront "$@")
+CONFIG_FILE=$(realpath "$SCRIPT_DIR/config.yaml")
+(set -a; eval "$(./env.sh .env)"; set +a; exec env -C "$BUILD_DIR" ./shopfront -c $CONFIG_FILE "$@")

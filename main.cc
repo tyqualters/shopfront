@@ -1,12 +1,27 @@
 #include <drogon/drogon.h>
+#include <cstring>
 
 int main(int argc, char** argv)
 {
 
+	std::string configFile = "config.yaml";
+
+	for(int i = 0; i < argc; ++i)
+	{
+		if (std::strcmp(argv[i], "-c") == 0 || std::strcmp(argv[i], "--config") == 0)
+		{
+			if (i + 1 < argc)
+			{
+				configFile = argv[++i];
+				LOG_INFO << "Arg-Set Config File: " << configFile;
+			}
+		}
+	}
+
 	// Set HTTP listener address and port
 	// drogon::app().addListener("0.0.0.0", port);
 	// Load config file
-	drogon::app().loadConfigFile("../../config.yaml");
+	drogon::app().loadConfigFile(configFile);
 
 	auto& config = drogon::app().getCustomConfig();
 	// TODO: Parse a .env file here if present, also look for std::env vars
