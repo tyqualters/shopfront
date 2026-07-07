@@ -7,6 +7,7 @@ services:
       dockerfile: Containerfile
     ports:
       - "8080:80"
+      - "4443:443"
     depends_on:
       - database
       - cache
@@ -16,10 +17,10 @@ services:
     container_name: dev-mariadb
     restart: always
     environment:
-      MARIADB_ROOT_PASSWORD: __test__1234
-      MARIADB_DATABASE: shopfront_db
-      MARIADB_USER: shopfront
-      MARIADB_PASSWORD: __test__1234
+      MARIADB_ROOT_PASSWORD: ${MARIADB_ROOT_PASSWORD:-__test__1234} 
+      MARIADB_DATABASE: ${MARIADB_DATABASE:-shopfront_db} 
+      MARIADB_USER: ${MARIADB_USER:-shopfront}
+      MARIADB_PASSWORD: ${MARIADB_PASSWORD:-__test__1234}
     ports:
       - "3306:3306"
     volumes:
@@ -30,16 +31,16 @@ services:
     container_name: dev-redis
     restart: always
     environment:
-      REDIS_DB: 0
-      REDIS_HOST: shopfront_cache
-      REDIS_USER: shopfront
-      REDIS_PASSWORD: __test__1234
+      REDIS_DB: ${REDIS_DB:-0} 
+      REDIS_HOST: ${REDIS_HOST:-shopfront_cache}
+      REDIS_USER: ${REDIS_USER:-shopfront}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-__test__1234}
       REDIS_PORT: 6379
     command: ["redis-server", "--user", "default", "off", "--user", "${REDIS_USER}", "on", ">${REDIS_PASSWORD}", "~*", "+@all"]
     ports:
       - "6379:6379"
     volumes:
-      - cache:/data
+      - cache:/data:Z
 
 volumes:
   mariadb-data:

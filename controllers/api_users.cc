@@ -9,6 +9,32 @@
 // 
 // --------------------------------------------------------------
 
+#if 0
+// DEV
+drogon::Task<HttpResponsePtr> api::GetUserDetails(HttpRequestPtr req, std::string userId)
+{
+	if (userId.empty())
+	{
+		Json::Value ret;
+		ret["result"] = "nok";
+		ret["message"] = "No user id specified"; 
+
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			ret	
+		);
+	}
+
+	if (userId == "me")
+	{
+		// Pull detailed report
+	}
+	else
+	{
+		// Pull simple report
+	}
+}
+#endif
+
 drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 {
 	auto redis = GetRedis();
