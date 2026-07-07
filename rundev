@@ -12,7 +12,7 @@ if [[ ! -d "$BUILD_DIR" ]]; then
 fi
 
 # Run CMake Build
-cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug -DBUILD_CTL=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DENABLE_DEBUG_SHOPFRONT=1
+cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON -DENABLE_DEBUG_SHOPFRONT=1
 
 if [[ ! $? -eq 0 ]]; then
 	echo CMake Build Failed >&2
