@@ -23,7 +23,7 @@ See license in LICENSE. Each dependency has its own license too to adhere to.
 Build Shopfront container
 
 ```bash
-podman build -t shopfront .
+podman --no-cache --network=host build -t shopfront .
 ```
 
 Start Shopfront container (prod-dev)

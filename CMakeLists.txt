@@ -35,6 +35,7 @@ set(USE_MYSQL ON CACHE BOOL "Enable Mysql" FORCE)
 set(YAML_CPP_BUILD_TESTS OFF CACHE BOOL "Disable Yaml tests" FORCE)
 set(JSONCPP_WITH_TESTS OFF CACHE BOOL "Disable Json tests" FORCE)
 set(JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE BOOL "Disable Json tests" FORCE)
+set(BUILD_YAML_CONFIG ON CACHE BOOL "" FORCE)
 
 # Debug Flag for Development
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND ENABLE_DEBUG_SHOPFRONT)
@@ -72,13 +73,16 @@ fetchcontent_declare(yaml-cpp
 )
 fetchcontent_makeavailable(yaml-cpp)
 install(TARGETS yaml-cpp EXPORT DrogonTargets)
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)i
+set(YAML_CPP_LIBRARIES yaml-cpp CACHE INTERNAL "" FORCE) 
+set(yaml-cpp_FOUND TRUE CACHE INTERNAL "" FORCE)
 
 # Fetch and Add Drogon
 fetchcontent_declare(drogon 
     GIT_REPOSITORY https://github.com/drogonframework/drogon.git
     GIT_TAG 4c5430757ea5451a7c38fbbef4b4bef7dbb47f2f # v1.9.13 release
 )
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_FIND_PACKAGE_REDIRECTS_DIR})
 fetchcontent_makeavailable(drogon)
 target_link_libraries(${PROJECT_NAME} PRIVATE drogon)
 

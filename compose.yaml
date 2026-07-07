@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Containerfile
+      network: host
     ports:
       - "8080:80"
       - "4443:443"

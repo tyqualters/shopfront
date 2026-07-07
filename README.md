@@ -20,9 +20,11 @@ Deployable eShops (SaaS)
 - [ ] All endpoints with valid requests return JSON
 - [ ] Appropriate HTTP codes for endpoints
 - [ ] **PRIORITY:** Env vars for DBs
+- [ ] **PRIORITY:** yaml-cpp "not used" error with Podman
 - [ ] **WIP:** Build endpoint routes
 - [ ] **WIP:** Build the frontend (React)
 - [ ] ...
+- [ ] Add Google Test Fetch Content to CMakeLists
 - [ ] Custom Config options (related to Env vars)
 - [ ] Improve and secure authentication
 - [ ] Add relational queries for permissions (IAM)
