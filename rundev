@@ -1,8 +1,55 @@
 #!/usr/bin/env bash
 
+# CWD = Script Directory
 SCRIPT_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-
 cd "$SCRIPT_DIR"
 
-cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug -DENABLE_DEBUG_SHOPFRONT=1 -DBUILD_TESTING=OFF $@ && make -C build && cd build && exec ./shopfront
+BUILD_DIR="$SCRIPT_DIR/build/debug"
+
+# Create build directory
+if [[ ! -d "$BUILD_DIR" ]]; then
+	mkdir -p "$BUILD_DIR"
+fi
+
+# Run CMake Build
+cmake -S . -B "$BUILD_DIR" -DCMAKE_BUILD_TYPE=Debug -DBUILD_CTL=OFF -DBUILD_TESTING=OFF -DBUILD_SHARED_LIBS=ON -DENABLE_DEBUG_SHOPFRONT=1
+
+if [[ ! $? -eq 0 ]]; then
+	echo CMake Build Failed >&2
+	exit 1
+fi
+
+# Run Make Build
+make -C "$BUILD_DIR"
+
+if [[ ! $? -eq 0 ]]; then
+	echo Make Build Failed >&2
+	exit 1
+fi
+
+# Add shortcut to npm build files
+if [[ ! -d "$BUILD_DIR/public_html" ]]; then
+	if [[ -d "$SCRIPT_DIR/shopfront-react" ]]; then
+		ln -s "$SCRIPT_DIR/shopfront-react/build/client" "$BUILD_DIR/public_html"
+	else
+		echo Cannot find React project >&2
+	fi
+fi
+
+# Generate certs
+if [[ ! -d "$BUILD_DIR/ssl" ]]; then
+	if [[ -f "$SCRIPT_DIR/gen_cert.sh" ]]; then
+		. "$SCRIPT_DIR/gen_cert.sh"
+		if [[ $? -eq 0 ]]; then
+			cp -r "$SCRIPT_DIR/ssl" "$BUILD_DIR/ssl"
+		else
+			echo Failed to generate SSL certificates >&2
+		fi
+	else
+		echo Cannot find SSL generate script >&2
+	fi
+fi
+
+# Execute the program
+(set -a; eval "$(./env.sh .env)"; set +a; exec env -C "$BUILD_DIR" ./shopfront "$@")
 

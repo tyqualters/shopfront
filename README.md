@@ -15,10 +15,15 @@ Deployable eShops (SaaS)
 - [x] Fix dep management + CI
 - [x] Deps build as Static/Shared (not implicit)
 - [x] Set up user authentication (very basic)
+- [ ] Add /api/user/{id} endpoint
+- [ ] All endpoints with valid requests return JSON
+- [ ] Appropriate HTTP codes for endpoints
 - [ ] **PRIORITY:** Env vars for DBs
 - [ ] **WIP:** Build endpoint routes
 - [ ] **WIP:** Build the frontend (React)
 - [ ] ...
+- [ ] Config locations (CWD, Project Dir, Custom Dir, etc.)
+- [ ] Custom Config options (related to Env vars)
 - [ ] Improve and secure authentication
 - [ ] Add relational queries for permissions (IAM)
 - [ ] Come up with an official name for the project 

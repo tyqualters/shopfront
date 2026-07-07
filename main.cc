@@ -2,10 +2,11 @@
 
 int main(int argc, char** argv)
 {
+
 	// Set HTTP listener address and port
 	// drogon::app().addListener("0.0.0.0", port);
 	// Load config file
-	drogon::app().loadConfigFile("../config.yaml");
+	drogon::app().loadConfigFile("../../config.yaml");
 
 	auto& config = drogon::app().getCustomConfig();
 	// TODO: Parse a .env file here if present, also look for std::env vars
@@ -17,6 +18,7 @@ int main(int argc, char** argv)
 	trantor::Logger::setLogLevel(trantor::Logger::kDebug);
 	LOG_WARN << "DEBUG MODE ENABLED";
 #endif
+
 	drogon::app().run();
 
 	return EXIT_SUCCESS;
