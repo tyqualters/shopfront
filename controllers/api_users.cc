@@ -10,27 +10,43 @@
 // --------------------------------------------------------------
 
 #if 0
-// DEV
 drogon::Task<HttpResponsePtr> api::GetUserDetails(HttpRequestPtr req, std::string userId)
 {
 	if (userId.empty())
 	{
-		Json::Value ret;
-		ret["result"] = "nok";
-		ret["message"] = "No user id specified"; 
-
 		co_return drogon::HttpResponse::newHttpJsonResponse(
-			ret	
+			JsonStandardError("No user id specified")	
 		);
 	}
 
 	if (userId == "me")
 	{
 		// Pull detailed report
+		if (std::string cookie = req->getCookie("session_token"); !cookie.empty())
+		{
+			auto redis = GetRedis();
+			auto res = co_await redis->execCommandCoro("GET %s", cookie.c_str());
+			if (res.type() == drogon::nosql::RedisResultType::kNil || res.type() == drogon::nosql::RedisResultType::kError)
+			{
+				co_return drogon::HttpResponse::newHttpJsonResponse(
+					JsonStandardError()	
+				);
+			}
+			
+			userId = res.asString();
+
+			// Make privileged request
+		}
+		else
+		{
+			co_return drogon::HttpResponse::newHttpJsonResponse(
+				JsonStandardError("No user id specified")	
+			);
+		}
 	}
-	else
+	else 
 	{
-		// Pull simple report
+		// Make non-privileged request
 	}
 }
 #endif
@@ -59,6 +75,8 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 	res->addHeader("Location", "/");
 
 	res->addCookie(authcookie);
+
+	// Todo: Make this API response actually return a JSON value
 
 	co_return res;
 }
@@ -98,10 +116,8 @@ drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 
 		Users user = co_await mp.findOne({Users::Cols::_userId, orm::CompareOperator::EQ, uid});
 
-		Json::Value ret;
-		ret["result"] = "ok";
+		auto ret = JsonStandardOk("You are: " + user.getValueOfUsername());
 		ret["token"] = token;
-		ret["message"] = "You are: " + user.getValueOfUsername();
 
 		co_return drogon::HttpResponse::newHttpJsonResponse(
 			ret	
@@ -111,24 +127,16 @@ drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 	{
 		LOG_ERROR << e.base().what();
 
-		Json::Value ret;
-		ret["result"] = "nok";
-		ret["message"] = "Internal service error";
-
 		co_return drogon::HttpResponse::newHttpJsonResponse(
-			ret	
+			JsonStandardError()	
 		);
 	}
 	catch (const std::exception &e)
 	{
 		LOG_ERROR << e.what();
 
-		Json::Value ret;
-		ret["result"] = "nok";
-		ret["message"] = "Internal service error";
-
 		co_return drogon::HttpResponse::newHttpJsonResponse(
-			ret	
+			JsonStandardError()
 		);
 	}
 }
@@ -183,10 +191,8 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 			authcookie.setSecure(true);
 
 			// Create response
-			Json::Value ret;
-			ret["result"] = "ok";
+			auto ret = JsonStandardOk("Authentication successful.");
 			ret["token"] = uuid;
-			ret["message"] = "Authentication successful.";
 
 			auto resp = drogon::HttpResponse::newHttpJsonResponse(
 				ret	
@@ -199,13 +205,8 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 	}
 	catch(...)
 	{
-
-		Json::Value ret;
-		ret["result"] = "nok";
-		ret["message"] = "Username or Password invalid";
-
 		co_return drogon::HttpResponse::newHttpJsonResponse(
-			ret	
+			JsonStandardError("Username or Password invalid")	
 		);
 	}
 }
@@ -264,12 +265,8 @@ drogon::Task<HttpResponsePtr> api::CreateUser(HttpRequestPtr req)
 		
 		co_await mp.insert(user);
 
-		Json::Value ret;
-		ret["result"] = "ok";
-		ret["message"] = "User created";
-
 		co_return drogon::HttpResponse::newHttpJsonResponse(
-			ret
+			JsonStandardOk("User created")	
 		);
 	}
 	catch (const drogon::orm::DrogonDbException &e)
@@ -282,12 +279,8 @@ drogon::Task<HttpResponsePtr> api::CreateUser(HttpRequestPtr req)
 	}
 	catch (const std::exception &e)
 	{	
-		Json::Value ret;
-		ret["result"] = "nok";
-		ret["message"] = e.what();
-
 		co_return drogon::HttpResponse::newHttpJsonResponse(
-			ret	
+			JsonStandardError(e.what())	
 		);
 	}
 }
@@ -306,8 +299,7 @@ drogon::Task<HttpResponsePtr> api::ListUsersDevOnly(HttpRequestPtr req)
         	// Pause coroutine until users acquired
 		std::vector<Users> users = co_await mp.findAll();
 
-		Json::Value ret;
-		ret["result"] = "ok";
+		auto ret = JsonStandardOk();
 
 		// Loop through all users
 		Json::Value usersArray(Json::arrayValue);

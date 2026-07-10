@@ -65,8 +65,6 @@ std::string ConvertSha256(std::string message)
 	return hash;
 }
 
-// co_await QueryRedis<<string, void>, DrogonDbException>("get value", "set x 5");
-
 // --------------------------------------------------------------
 // 
 // 	ROUTE METHODS
@@ -75,28 +73,23 @@ std::string ConvertSha256(std::string message)
 
 void api::JsonOk(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback)
 {
-	Json::Value ret;
-	ret["result"] = "ok";
-	auto resp = HttpResponse::newHttpJsonResponse(ret);
+	auto resp = HttpResponse::newHttpJsonResponse(JsonStandardOk());
 	callback(resp);
 }
 
 void api::ToSha256(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback, std::string message)
-{
-	Json::Value ret;
-
+{	
+	std::string m;
 	if (!message.empty())
 	{
-		ret["result"] = "ok";
-		ret["message"] = ConvertSha256(message);
+		m = ConvertSha256(message);
 	}
 	else
 	{
-		ret["result"] = "nok";
-		ret["message"] = "No string provided. Pass ?message= GET parameter.";
+		m = "No string provided. Pass ?message= GET parameter.";
 	}
 
-	auto resp = HttpResponse::newHttpJsonResponse(ret);
+	auto resp = HttpResponse::newHttpJsonResponse(JsonStandardOk(m));
 	callback(resp);
 }
 

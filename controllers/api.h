@@ -14,11 +14,21 @@ inline auto GetRedis()
 	return drogon::app().getFastRedisClient("shopfront_cache");
 }
 
-inline const Json::Value JsonStandardError()
+inline Json::Value JsonStandardOk(std::optional<std::string>&& message = std::nullopt)
+{
+	Json::Value ret;
+	ret["result"] = "ok";
+	if(message.has_value())
+		ret["message"] = message.value(); 
+
+	return ret;
+}
+
+inline Json::Value JsonStandardError(std::string&& message = "See internal service logs")
 {
 	Json::Value ret;
 	ret["result"] = "nok";
-	ret["message"] = "See internal service logs";
+	ret["message"] = message;
 	
 	return ret;
 }
@@ -47,11 +57,11 @@ public:
 	// User Authentication
 	METHOD_ADD(api::AuthenticateUser, "/login", Post, "no_login_filter");
 
+	// User Profiles
+	//METHOD_ADD(api::GetUserDetails, "/user/{id}", Get);
+
 	// User Signout
 	METHOD_ADD(api::SignoutUser, "/logout", Get, "login_filter");
-
-	// TODO: Validate Authentication (or delete cookie and redirect)
-	// METHOD_ADD(api::ValidateUser, "login_filter", Get);
 
 	// Update User, Shop, Product
 	METHOD_ADD(api::JsonOk, "/update", Post);
@@ -72,13 +82,10 @@ public:
 	drogon::Task<HttpResponsePtr> CreateUser(HttpRequestPtr req);
 	drogon::Task<HttpResponsePtr> AuthenticateUser(HttpRequestPtr req);	
 	drogon::Task<HttpResponsePtr> SignoutUser(HttpRequestPtr req);
+	drogon::Task<HttpResponsePtr> GetUserDetails(HttpRequestPtr req, std::string userId);
 
 	// Dev only routes
 	drogon::Task<HttpResponsePtr> Whoami(HttpRequestPtr req);
 	drogon::Task<HttpResponsePtr> ListUsersDevOnly(HttpRequestPtr req);
 	void ToSha256(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback, std::string message);
-
-	/*	OLD CALLBACK VERSIONS FOR REFERENCE	*/	
-	// void ListUsersDevOnly(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
-	// void CreateUser(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback);
 };
