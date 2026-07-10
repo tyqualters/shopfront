@@ -37,6 +37,9 @@ set(JSONCPP_WITH_TESTS OFF CACHE BOOL "Disable Json tests" FORCE)
 set(JSONCPP_WITH_POST_BUILD_UNITTEST OFF CACHE BOOL "Disable Json tests" FORCE)
 set(BUILD_YAML_CONFIG ON CACHE BOOL "" FORCE)
 
+# Add CMake Modules (... for yaml-cpp ...)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+
 # Debug Flag for Development
 if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND ENABLE_DEBUG_SHOPFRONT)
 	message(WARNING "Shopfront Debug Mode Enabled")
@@ -66,6 +69,7 @@ set(JSONCPP_INCLUDE_DIRS
     CACHE INTERNAL "Jsoncpp include dirs for Drogon"
 )
 set(JSONCPP_LIBRARIES jsoncpp_lib CACHE INTERNAL "Jsoncpp libraries for Drogon")
+
 # Fetch and Add yaml-cpp
 fetchcontent_declare(yaml-cpp 
     GIT_REPOSITORY https://github.com/jbeder/yaml-cpp.git
@@ -73,9 +77,8 @@ fetchcontent_declare(yaml-cpp
 )
 fetchcontent_makeavailable(yaml-cpp)
 install(TARGETS yaml-cpp EXPORT DrogonTargets)
-target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp)i
-set(YAML_CPP_LIBRARIES yaml-cpp CACHE INTERNAL "" FORCE) 
-set(yaml-cpp_FOUND TRUE CACHE INTERNAL "" FORCE)
+target_link_libraries(${PROJECT_NAME} PRIVATE yaml-cpp::yaml-cpp)
+set(FETCHED_YAML TRUE CACHE BOOL "" FORCE)
 
 # Fetch and Add Drogon
 fetchcontent_declare(drogon 
