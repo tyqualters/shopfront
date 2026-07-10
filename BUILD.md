@@ -1,12 +1,35 @@
 ## Building + Testing
 
-To build a release version of this project, run: `./run`
+If you are a developer on Linux, just use: `podman-compose up -d cache database` and `./rundev`
 
-If you are a developer on Linux, just use: `podman-compose up -d database` and `./rundev`
+**Not tested on Windows or Mac.**
+
+For production, modify config.yaml to required settings. Can use environment variables.
 
 Adding the frontend for dev, create a symlink from the frontend build/client directory to the backend: build/public_html.
 
-**Not tested on Windows or Mac.**
+Make sure MariaDB and Redis databases are live. Run: `./run` or `podman-compose up -d web-app`
+
+## Sample .env file
+
+```
+# Database
+MARIADB_ROOT_PASSWORD=__test__1234
+MARIADB_DATABASE=shopfront_db
+MARIADB_USER=shopfront
+MARIADB_PASSWORD=__test__1234
+
+# Redis
+REDIS_DB=0
+REDIS_HOST=shopfront_cache
+REDIS_USER=shopfront
+REDIS_PASSWORD=__test__1234
+REDIS_PORT=6379
+```
+
+Vibe-coded environment variable parsing functionality into the config.yaml file. (My brain is fried.)
+
+Anywhere in the config file, use: `${ENV_VAR_NAME :- DEFAULT_VALUE}`
 
 ## Deploying
 
@@ -18,7 +41,7 @@ See license in LICENSE. Each dependency has its own license too to adhere to.
 
 ---
 
-## Podman
+## Podman (Just for Ref)
 
 Build Shopfront container
 
@@ -78,14 +101,13 @@ podman images
 
 ---
 
-## Podman-Compose
+## Podman-Compose (Just for Ref)
 
 Start up containers
 
 -# `-d` Start in background
 
 -# `--build` Build fresh images
-RUN cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 
 ```bash
 podman-compose up

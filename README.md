@@ -16,16 +16,15 @@ Deployable eShops (SaaS)
 - [x] Deps build as Static/Shared (not implicit)
 - [x] Set up user authentication (very basic)
 - [x] Config locations (impl. with -c flag)
+- [x] yaml-cpp "not used" error with Podman
+- [x] Env vars for DBs
 - [ ] Add /api/user/{id} endpoint
 - [ ] All endpoints with valid requests return JSON
 - [ ] Appropriate HTTP codes for endpoints
-- [ ] **PRIORITY:** Env vars for DBs
-- [ ] **PRIORITY:** yaml-cpp "not used" error with Podman
 - [ ] **WIP:** Build endpoint routes
 - [ ] **WIP:** Build the frontend (React)
 - [ ] ...
 - [ ] Add Google Test Fetch Content to CMakeLists
-- [ ] Custom Config options (related to Env vars)
 - [ ] Improve and secure authentication
 - [ ] Add relational queries for permissions (IAM)
 - [ ] Come up with an official name for the project 

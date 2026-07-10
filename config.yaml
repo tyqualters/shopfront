@@ -1,13 +1,13 @@
  ssl:
-   cert: ./ssl/cert.pem
-   key: ./ssl/key.pem
+   cert: ${SHOPFRONT_SSL_CERT:-'./ssl/cert.pem'}
+   key: ${SHOPFRONT_SSL_KEY:-'./ssl/key.pem'}
    conf: []
  listeners:
    - address: 0.0.0.0
-     port: 8080
+     port: ${SHOPFRONT_HTTP_PORT:-8080}
      https: false
    - address: 0.0.0.0
-     port: 4443
+     port: ${SHOPFRONT_HTTPS_PORT:-4443}
      https: true
      cert: ''
      key: ''
@@ -17,26 +17,26 @@
    - name: default
      rdbms: mysql
      host: 127.0.0.1
-     port: 3306
-     dbname: shopfront_db
-     user: 'shopfront'
-     passwd: '__test__1234'
+     port: ${MARIADB_PORT:-3306}
+     dbname: ${MARIADB_DATABASE:-shopfront_db}
+     user: ${MARIADB_USER:-'shopfront'}
+     passwd: ${MARIADB_PASSWORD:-'__test__1234'}
      is_fast: true
      number_of_connections: 1
      timeout: -1
  redis_clients:
      # name: Name of the client,'default' by default
-   - name: shopfront_cache 
+   - name: ${REDIS_HOST:-shopfront_cache}
      # host: Server IP, 127.0.0.1 by default
      host: 127.0.0.1
      # port: Server port, 6379 by default
-     port: 6379
+     port: ${REDIS_PORT:-6379}
      # username: '' by default which means 'default' in redis ACL
-     username: 'shopfront'
+     username: ${REDIS_USER:-shopfront}
      # passwd: '' by default
-     passwd: '__test__1234'
+     passwd: ${REDIS_PASSWORD:-'__test__1234'}
      # db index: 0 by default
-     db: 0
+     db: ${REDIS_DB:-0}
      # is_fast: false by default, if it is true, the client is faster but user can't call
      # any synchronous interface of it.
      is_fast: true
