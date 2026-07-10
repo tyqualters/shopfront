@@ -18,9 +18,9 @@ Deployable eShops (SaaS)
 - [x] Config locations (impl. with -c flag)
 - [x] yaml-cpp "not used" error with Podman
 - [x] Env vars for DBs
-- [ ] Add /api/user/{id} endpoint
-- [ ] All endpoints with valid requests return JSON
-- [ ] Appropriate HTTP codes for endpoints
+- [ ] **WIP:** Add /api/user/{id} endpoint
+- [ ] **WIP:** All API endpoints with valid requests return JSON
+- [ ] Appropriate HTTP codes for endpoints (may just use 200)
 - [ ] **WIP:** Build endpoint routes
 - [ ] **WIP:** Build the frontend (React)
 - [ ] ...
