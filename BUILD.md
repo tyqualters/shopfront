@@ -1,4 +1,6 @@
-## Building + Testing
+# Building + Testing
+
+The frontend repository is available here: [shopfront-react](https://github.com/tyqualters/shopfront-react).
 
 If you are a developer on Linux, just use: `podman-compose up -d cache database` and `./rundev`
 
@@ -27,106 +29,11 @@ REDIS_PASSWORD=__test__1234
 REDIS_PORT=6379
 ```
 
-Vibe-coded environment variable parsing functionality into the config.yaml file. (My brain is fried.)
-
 Anywhere in the config file, use: `${ENV_VAR_NAME :- DEFAULT_VALUE}`
 
 ## Deploying
 
-Deploy with Podman. See Containerfile.
+A Containerfile is provided for Docker or Podman.
 
-## License
+A compose.yaml file is provided for Docker-Compose or Podman-Compose.
 
-See license in LICENSE. Each dependency has its own license too to adhere to.
-
----
-
-## Podman (Just for Ref)
-
-Build Shopfront container
-
-```bash
-podman --no-cache --network=host build -t shopfront .
-```
-
-Start Shopfront container (prod-dev)
-
--# `-d` Start in background
-
--# `-it` Interactive + TTY
-
--# `--rm` Automatically destroy itself upon exit
-
-```bash
-podman run -d -it --rm --name shopfront -p 8080:80 shopfront
-```
-
-Spawn a shell (prod-dev)
-
-```bash
-podman exec -it -u root shopfront /bin/bash
-```
-
-Kill and destroy the container
-
-```bash
-podman stop shopfront
-podman rm shopfront
-```
-
-List containers
-
-```bash
-podman ps -a
-podman pod ps
-```
-
-Delete an image
-
-```bash
-podman rmi image-name
-```
-
-Delete dangling (old) images
-
-```bash
-podman image prune
-```
-
-List images
-
-```bash
-podman images
-```
-
----
-
-## Podman-Compose (Just for Ref)
-
-Start up containers
-
--# `-d` Start in background
-
--# `--build` Build fresh images
-
-```bash
-podman-compose up
-```
-
-Tear down containers
-
--# `-v` also remove volumes
-
--# `--rmi local` remove Containerfile images (only)
-
--# `--rmi all` remove all images
-
-```bash
-podman-compose down
-```
-
-List images
-
-```bash
-podman-compose images
-```

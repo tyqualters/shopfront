@@ -2,7 +2,7 @@ FROM ubuntu:latest
 MAINTAINER Ty contact@tyqualters.com
 USER root
 
-WORKDIR /app
+WORKDIR /opt/app
 
 # Updates
 RUN apt-get update -y
