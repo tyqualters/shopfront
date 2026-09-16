@@ -60,7 +60,15 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 	authcookie.setMaxAge(0);
 	authcookie.setExpiresDate(trantor::Date(0));
 	authcookie.setHttpOnly(true);
-	authcookie.setSecure(true);	
+	authcookie.setSecure(true);
+
+  drogon::Cookie clientcookie("authid", "-1");
+  clientcookie.setPath("/");
+	clientcookie.setMaxAge(0);
+	clientcookie.setExpiresDate(trantor::Date(0));
+  clientcookie.setHttpOnly(false);
+  clientcookie.setSecure(false);
+
 
 	if (std::string cookie = req->getCookie("session_token"); !cookie.empty())
 	{
@@ -75,6 +83,7 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 	res->addHeader("Location", "/");
 
 	res->addCookie(authcookie);
+  res->addCookie(clientcookie);
 
 	// Todo: Make this API response actually return a JSON value
 
@@ -183,12 +192,19 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
     			co_await transaction->execCommandCoro("SET %s %d EX %d", uuid.c_str(), uid, expiration);
    			co_await transaction->executeCoro();
 
-			// Generate cookie
+			// Generate server-side cookie
 			drogon::Cookie authcookie("session_token", uuid);
 			authcookie.setPath("/");
 			authcookie.setExpiresDate(trantor::Date::date().after(expiration));
 			authcookie.setHttpOnly(true);
 			authcookie.setSecure(true);
+
+      // Generate client-side cookie
+			drogon::Cookie clientcookie("authid", std::to_string(uid));
+			clientcookie.setPath("/");
+			clientcookie.setExpiresDate(trantor::Date::date().after(expiration));
+			clientcookie.setHttpOnly(false);
+			clientcookie.setSecure(false);
 
 			// Create response
 			auto ret = JsonStandardOk("Authentication successful.");
@@ -199,6 +215,11 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 			);
 
 			resp->addCookie(authcookie);
+      resp->addCookie(clientcookie);
+      
+
+      resp->setStatusCode(k302Found);
+      resp->addHeader("Location", "/");
 
 			co_return resp;
 		} else throw std::invalid_argument("Invalid User or Pass");

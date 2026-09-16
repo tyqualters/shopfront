@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.31)
-project(shopfront CXX VERSION 0.0.1)
+project(shopfront LANGUAGES CXX VERSION 0.0.1)
 
 include(CheckIncludeFileCXX)
 include(FetchContent)
