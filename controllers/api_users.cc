@@ -2,6 +2,11 @@
 #include "Users.h"
 
 #include <regex>
+#include <algorithm>
+#include <cctype>
+
+std::string ConvertSha256(std::string message);
+
 
 // --------------------------------------------------------------
 // 
@@ -126,7 +131,13 @@ drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 		Users user = co_await mp.findOne({Users::Cols::_userId, orm::CompareOperator::EQ, uid});
 
 		auto ret = JsonStandardOk("You are: " + user.getValueOfUsername());
-		ret["token"] = token;
+    ret["uid"] = user.getValueOfUserid();
+    std::string lcEmail = user.getValueOfUseremail();
+    std::transform(lcEmail.begin(), lcEmail.end(), lcEmail.begin(), [](unsigned char c) { return std::tolower(c); });
+    std::string lcEmailHash = ConvertSha256(lcEmail);
+    std::transform(lcEmailHash.begin(), lcEmailHash.end(), lcEmailHash.begin(), [](unsigned char c) { return std::tolower(c); });
+    ret["email"] = lcEmail;
+    ret["gravatar"] = "https://www.gravatar.com/avatar/" + lcEmailHash + "?s=200&d=mp&r=pg";
 
 		co_return drogon::HttpResponse::newHttpJsonResponse(
 			ret	
