@@ -8,3 +8,11 @@ void react::asyncHandleHttpRequest(const HttpRequestPtr& req, std::function<void
 	resp->setStatusCode(k200OK);
 	callback(resp);
 }
+
+drogon::Task<HttpResponsePtr> reactregex::SendIndex(HttpRequestPtr req)
+{
+	auto resp = drogon::HttpResponse::newFileResponse("./public_html/index.html");
+	resp->setContentTypeCode(drogon::CT_TEXT_HTML);
+	resp->setStatusCode(k200OK);
+	co_return resp;
+}

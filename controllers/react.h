@@ -1,5 +1,6 @@
 #pragma once
 
+#include <drogon/HttpController.h>
 #include <drogon/HttpSimpleController.h>
 
 using namespace drogon;
@@ -11,12 +12,21 @@ using namespace drogon;
 class react : public drogon::HttpSimpleController<react>
 {
 public:
-	void asyncHandleHttpRequest(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback) override;
-	PATH_LIST_BEGIN
-	// list path definitions here;
-	// PATH_ADD("/path", "filter1", "filter2", HttpMethod1, HttpMethod2...);
-	PATH_ADD("/login", Get, "no_login_filter");
-	PATH_ADD("/register", Get, "no_login_filter");
-	PATH_ADD("/dashboard", Get, "login_filter");
-	PATH_LIST_END
+    void asyncHandleHttpRequest(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback) override;
+    PATH_LIST_BEGIN
+    // list path definitions here;
+    // PATH_ADD("/path", "filter1", "filter2", HttpMethod1, HttpMethod2...);
+    PATH_ADD("/login", Get, "no_login_filter");
+    PATH_ADD("/register", Get, "no_login_filter");
+    PATH_LIST_END
+};
+
+class reactregex : public drogon::HttpController<reactregex>
+{
+public:
+    METHOD_LIST_BEGIN
+    ADD_METHOD_VIA_REGEX(reactregex::SendIndex, "/dashboard(/.*)?", Get, "login_filter");
+    METHOD_LIST_END
+
+    drogon::Task<HttpResponsePtr> SendIndex(HttpRequestPtr req);
 };
