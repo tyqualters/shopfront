@@ -18,22 +18,23 @@ TASK LIST:
 - [x] Env vars for DBs
 - [x] Come up with an official name for the project
 - [x] Build dashboard endpoint
-- [ ] **PRIORITY:** add /api/shops endpoint for shop selection
-- [ ] **WIP:** Add /api/user/{id} endpoint
-- [ ] **WIP:** All API endpoints with valid requests return JSON
-- [ ] Appropriate HTTP codes for endpoints (may just use 200)
+- [x] add /api endpoint for shop selection
+- [ ] add /api endpoint for product selection
 - [ ] **WIP:** Build endpoint routes **(MILESTONE)**
 - [ ] **WIP:** Build the frontend (React) **(MILESTONE)**
 
 DEFERRED TASK LIST:
 
-- [ ] Improve and secure authentication
-- [ ] Add relational queries for permissions (IAM)
-- [ ] Add dep cache to GitHub Actions
-- [ ] Migrate _TO_ Ninja and Clang (Default) _FROM_ Make and GCC
-- [ ] Use AI to draft Privacy Policy + Terms of Use
-- [ ] Cookie Consent (GDPR)
-- [ ] Check and fetch frontend
+- [ ] (QoS) Appropriate HTTP codes for endpoints (may just use 200)
+- [ ] (QoL) Add /api/user/{id} endpoint
+- [ ] (QoS) All API endpoints with valid requests return JSON
+- [ ] (Security) Improve and secure authentication
+- [ ] (IAM) Add relational queries for permissions
+- [ ] (QoS) Add dep cache to GitHub Actions
+- [ ] (QoS) Migrate _TO_ Ninja and Clang (Default) _FROM_ Make and GCC
+- [ ] (Legal) Use AI to draft Privacy Policy + Terms of Use
+- [ ] (Legal) Cookie Consent (GDPR)
+- [ ] (DX) Check and fetch frontend
 
 NOTES:
 

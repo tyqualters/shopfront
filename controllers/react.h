@@ -19,6 +19,7 @@ public:
     PATH_ADD("/login", Get, "no_login_filter");
     PATH_ADD("/register", Get, "no_login_filter");
     PATH_ADD("/register-shop", Get, "login_filter");
+    PATH_ADD("/register-product", Get, "login_filter");
     PATH_LIST_END
 };
 
