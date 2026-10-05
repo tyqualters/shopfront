@@ -165,7 +165,7 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 		
 		if (username.empty() || password.empty()) throw std::invalid_argument("Invalid User or Pass");
 		
-		Users user = co_await mp.findOne({Users::Cols::_userName, orm::CompareOperator::EQ, username});
+    Users user = co_await mp.findOne({Users::Cols::_userName, orm::CompareOperator::EQ, username});
 		
 		if (user.getValueOfUserpass() == password)
 		{
