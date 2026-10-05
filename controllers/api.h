@@ -67,7 +67,7 @@ public:
 	METHOD_ADD(api::JsonOk, "/update", Post);
 	
 	// Shop Details
-	METHOD_ADD(api::JsonOk, "/shop", Get);
+  METHOD_ADD(api::CreateShop, "/register-shop", Post);
 	
 	// Product/Item Details
 	METHOD_ADD(api::JsonOk, "/product", Get);
@@ -83,8 +83,9 @@ public:
 	drogon::Task<HttpResponsePtr> AuthenticateUser(HttpRequestPtr req);	
 	drogon::Task<HttpResponsePtr> SignoutUser(HttpRequestPtr req);
 	drogon::Task<HttpResponsePtr> GetUserDetails(HttpRequestPtr req, std::string userId);
-
-	// Dev only routes
+  drogon::Task<HttpResponsePtr> CreateShop(HttpRequestPtr req);
+	
+  // Dev only routes
 	drogon::Task<HttpResponsePtr> Whoami(HttpRequestPtr req);
 	drogon::Task<HttpResponsePtr> ListUsersDevOnly(HttpRequestPtr req);
 	void ToSha256(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback, std::string message);

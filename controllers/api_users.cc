@@ -8,6 +8,8 @@
 std::string ConvertSha256(std::string message);
 
 
+drogon::Task<std::optional<int32_t>> GetUserId(std::string&& token);
+
 // --------------------------------------------------------------
 // 
 // 	ROUTE METHODS
@@ -90,7 +92,7 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 	res->addCookie(authcookie);
   res->addCookie(clientcookie);
 
-	// Todo: Make this API response actually return a JSON value
+	// TODO: Make this API response actually return a JSON value
 
 	co_return res;
 }
@@ -106,29 +108,15 @@ drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 	try
 	{
 		std::string token = req->getCookie("session_token");
+    auto uid = co_await GetUserId(std::move(token));
 
-		if (token.empty())
-			throw std::runtime_error("No token provided");
+    if (!uid.has_value())
+			throw std::runtime_error("No valid session.");
 
-		auto transaction = co_await redis->newTransactionCoro();
-		co_await transaction->execCommandCoro("GET %s", token.c_str());
-		auto res = co_await transaction->executeCoro();
-		
-		std::vector<drogon::nosql::RedisResult> redisResults;
-
-		if (res.type() != drogon::nosql::RedisResultType::kArray || (redisResults = res.asArray()).size() == 0)
-			throw std::runtime_error("Transaction failed or returned invalid format");
-
-		if (redisResults[0].type() == drogon::nosql::RedisResultType::kNil || redisResults[0].type() == drogon::nosql::RedisResultType::kError)
-			throw std::runtime_error("Token not found");
-
-		auto uid = redisResults[0].asString();
-
-		LOG_DEBUG << "Whoami Uid: " << uid;
 
 		drogon::orm::CoroMapper<Users> mp(client);
 
-		Users user = co_await mp.findOne({Users::Cols::_userId, orm::CompareOperator::EQ, uid});
+		Users user = co_await mp.findOne({Users::Cols::_userId, orm::CompareOperator::EQ, uid.value()});
 
 		auto ret = JsonStandardOk("You are: " + user.getValueOfUsername());
     ret["uid"] = user.getValueOfUserid();
@@ -328,7 +316,7 @@ drogon::Task<HttpResponsePtr> api::ListUsersDevOnly(HttpRequestPtr req)
 
 	try 
 	{
-        	// Pause coroutine until users acquired
+    // Pause coroutine until users acquired
 		std::vector<Users> users = co_await mp.findAll();
 
 		auto ret = JsonStandardOk();

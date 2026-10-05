@@ -18,6 +18,7 @@ public:
     // PATH_ADD("/path", "filter1", "filter2", HttpMethod1, HttpMethod2...);
     PATH_ADD("/login", Get, "no_login_filter");
     PATH_ADD("/register", Get, "no_login_filter");
+    PATH_ADD("/register-shop", Get, "login_filter");
     PATH_LIST_END
 };
 
