@@ -16,52 +16,15 @@ drogon::Task<std::optional<int32_t>> GetUserId(std::string&& token);
 // 
 // --------------------------------------------------------------
 
-#if 0
-drogon::Task<HttpResponsePtr> api::GetUserDetails(HttpRequestPtr req, std::string userId)
-{
-	if (userId.empty())
-	{
-		co_return drogon::HttpResponse::newHttpJsonResponse(
-			JsonStandardError("No user id specified")	
-		);
-	}
-
-	if (userId == "me")
-	{
-		// Pull detailed report
-		if (std::string cookie = req->getCookie("session_token"); !cookie.empty())
-		{
-			auto redis = GetRedis();
-			auto res = co_await redis->execCommandCoro("GET %s", cookie.c_str());
-			if (res.type() == drogon::nosql::RedisResultType::kNil || res.type() == drogon::nosql::RedisResultType::kError)
-			{
-				co_return drogon::HttpResponse::newHttpJsonResponse(
-					JsonStandardError()	
-				);
-			}
-			
-			userId = res.asString();
-
-			// Make privileged request
-		}
-		else
-		{
-			co_return drogon::HttpResponse::newHttpJsonResponse(
-				JsonStandardError("No user id specified")	
-			);
-		}
-	}
-	else 
-	{
-		// Make non-privileged request
-	}
-}
-#endif
-
+/**
+ * Sign a user out 
+ */
 drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 {
+  // Redis Client
 	auto redis = GetRedis();
 
+  // Reset cookie
 	drogon::Cookie authcookie("session_token", "invalid");
 	authcookie.setPath("/");
 	authcookie.setMaxAge(0);
@@ -69,6 +32,7 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 	authcookie.setHttpOnly(true);
 	authcookie.setSecure(true);
 
+  // Reset cookie
   drogon::Cookie clientcookie("authid", "-1");
   clientcookie.setPath("/");
 	clientcookie.setMaxAge(0);
@@ -76,7 +40,7 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
   clientcookie.setHttpOnly(false);
   clientcookie.setSecure(false);
 
-
+  // If cookie existed, delete token from Redis
 	if (std::string cookie = req->getCookie("session_token"); !cookie.empty())
 	{
 		auto result = co_await redis->execCommandCoro("UNLINK %s", cookie.c_str());
@@ -86,9 +50,11 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 
 	auto res = HttpResponse::newHttpResponse();
 
+  // Redirect
 	res->setStatusCode(k302Found);
 	res->addHeader("Location", "/");
 
+  // Update cookies
 	res->addCookie(authcookie);
   res->addCookie(clientcookie);
 
@@ -97,27 +63,35 @@ drogon::Task<HttpResponsePtr> api::SignoutUser(HttpRequestPtr req)
 	co_return res;
 }
 
+/**
+ * Get user information from uid
+ */
 drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 {
 	using namespace drogon_model::shopfront_db;
 
-	auto redis = GetRedis();
-
+  // Get Mariadb Client
 	auto client = GetClient();
+
+  // Token (temp)
+	std::string _token = req->getCookie("session_token");
 
 	try
 	{
-		std::string token = req->getCookie("session_token");
-    auto uid = co_await GetUserId(std::move(token));
+    // Get uid (moved _token)
+    auto uid = co_await GetUserId(std::move(_token));
 
+    // Not logged in
     if (!uid.has_value())
 			throw std::runtime_error("No valid session.");
 
-
+    // Users ORM
 		drogon::orm::CoroMapper<Users> mp(client);
 
+    // Find user by uid
 		Users user = co_await mp.findOne({Users::Cols::_userId, orm::CompareOperator::EQ, uid.value()});
 
+    // Return user information
 		auto ret = JsonStandardOk("You are: " + user.getValueOfUsername());
     ret["uid"] = user.getValueOfUserid();
     std::string lcEmail = user.getValueOfUseremail();
@@ -133,6 +107,7 @@ drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 	}
 	catch (const drogon::orm::DrogonDbException &e)
 	{
+    // Database error
 		LOG_ERROR << e.base().what();
 
 		co_return drogon::HttpResponse::newHttpJsonResponse(
@@ -141,6 +116,7 @@ drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 	}
 	catch (const std::exception &e)
 	{
+    // General exception
 		LOG_ERROR << e.what();
 
 		co_return drogon::HttpResponse::newHttpJsonResponse(
@@ -149,24 +125,32 @@ drogon::Task<HttpResponsePtr> api::Whoami(HttpRequestPtr req)
 	}
 }
 
+/**
+ * Log a user in (<form>)
+ */
 drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 {
 
 	using namespace drogon_model::shopfront_db;
 
+  // Get Mariadb Client
 	auto client = GetClient();
 
+  // Users ORM
 	drogon::orm::CoroMapper<Users> mp(client);
 
 	try
 	{
+    // get username and password params
 		std::string username = req->getParameter("username"); 
 		std::string password = req->getParameter("password"); 
 		
 		if (username.empty() || password.empty()) throw std::invalid_argument("Invalid User or Pass");
-		
+	
+    // Find user by matching username
     Users user = co_await mp.findOne({Users::Cols::_userName, orm::CompareOperator::EQ, username});
-		
+	
+    // Check password
 		if (user.getValueOfUserpass() == password)
 		{
 
@@ -216,7 +200,7 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 			resp->addCookie(authcookie);
       resp->addCookie(clientcookie);
       
-
+      // Redirect
       resp->setStatusCode(k302Found);
       resp->addHeader("Location", "/");
 
@@ -225,29 +209,36 @@ drogon::Task<HttpResponsePtr> api::AuthenticateUser(HttpRequestPtr req)
 	}
 	catch(...)
 	{
+    // Catch-All exceptions
 		co_return drogon::HttpResponse::newHttpJsonResponse(
 			JsonStandardError("Username or Password invalid")	
 		);
 	}
 }
 
+/**
+ * Create a new user
+ */
 drogon::Task<HttpResponsePtr> api::CreateUser(HttpRequestPtr req)
 {
 	using namespace drogon_model::shopfront_db;
 
+  // Mariadb Client
 	auto client = GetClient();
 
+  // Users ORM
 	drogon::orm::CoroMapper<Users> mp(client);
 
-
+  // Regex for constraints
 	std::regex emailPattern(R"(^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$)");
 	std::regex userNamePattern(R"(^[a-zA-Z0-9._]+$)");	
 	
 	try
 	{
-		// Do sanity checks
+		// Create User 
 		Users user;
-		
+	
+    // Get parameters
 		const std::string &username = req->getParameter("username");
 		const std::string &email = req->getParameter("email");
 		const std::string &password = req->getParameter("password");
@@ -279,10 +270,12 @@ drogon::Task<HttpResponsePtr> api::CreateUser(HttpRequestPtr req)
 		if (password.find(' ') != std::string::npos)
 			throw std::invalid_argument("No whitespaces allowed in password");
 
+    // Update user information
 		user.setUsername(username);
 		user.setUseremail(email);
 		user.setUserpass(password);
 		
+    // Push to database
 		co_await mp.insert(user);
 
 		co_return drogon::HttpResponse::newHttpJsonResponse(
@@ -291,6 +284,7 @@ drogon::Task<HttpResponsePtr> api::CreateUser(HttpRequestPtr req)
 	}
 	catch (const drogon::orm::DrogonDbException &e)
 	{
+    // Database error
 		LOG_ERROR << "Error: " << e.base().what();
 
 		co_return drogon::HttpResponse::newHttpJsonResponse(
@@ -299,47 +293,11 @@ drogon::Task<HttpResponsePtr> api::CreateUser(HttpRequestPtr req)
 	}
 	catch (const std::exception &e)
 	{	
+    // General exception
 		co_return drogon::HttpResponse::newHttpJsonResponse(
 			JsonStandardError(e.what())	
 		);
 	}
 }
 
-drogon::Task<HttpResponsePtr> api::ListUsersDevOnly(HttpRequestPtr req)
-{
-	using namespace drogon_model::shopfront_db;
-
-	auto client = GetClient();
-
-	// C++20 Coroutines
-	drogon::orm::CoroMapper<Users> mp(client);
-
-	try 
-	{
-    // Pause coroutine until users acquired
-		std::vector<Users> users = co_await mp.findAll();
-
-		auto ret = JsonStandardOk();
-
-		// Loop through all users
-		Json::Value usersArray(Json::arrayValue);
-		for (const auto &user : users)
-		{
-			// username is "not null"
-			usersArray.append(user.getValueOfUsername());
-		}
-		ret["users"] = usersArray;
-
-		// co_return is used instead of callback
-		co_return drogon::HttpResponse::newHttpJsonResponse(ret);
-	}
-	catch (const drogon::orm::DrogonDbException &e)
-	{
-		LOG_ERROR << "Error: " << e.base().what();
-
-		co_return drogon::HttpResponse::newHttpJsonResponse(
-			JsonStandardError()
-		);
-	}
-}
 

@@ -1,6 +1,8 @@
 #include "react.h"
 
-
+/**
+ * Send index page (SimpleHttpController)
+ */
 void react::asyncHandleHttpRequest(const HttpRequestPtr& req, std::function<void (const HttpResponsePtr &)> &&callback)
 {
 	auto resp = drogon::HttpResponse::newFileResponse("./public_html/index.html");
@@ -9,6 +11,9 @@ void react::asyncHandleHttpRequest(const HttpRequestPtr& req, std::function<void
 	callback(resp);
 }
 
+/**
+ * Send index page (HttpController)
+ */
 drogon::Task<HttpResponsePtr> reactregex::SendIndex(HttpRequestPtr req)
 {
 	auto resp = drogon::HttpResponse::newFileResponse("./public_html/index.html");

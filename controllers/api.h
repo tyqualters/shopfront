@@ -44,9 +44,9 @@ public:
 
 #ifdef ENABLE_DEBUG_SHOPFRONT
 	// List Users
-	METHOD_ADD(api::ListUsersDevOnly, "/list-users", Get, "login_filter");
+	METHOD_ADD(api::ListUsersDevOnly, "/list-users", Get, "dev_only");
 	// To SHA-256
-	METHOD_ADD(api::ToSha256, "/sha256?message={}", Get);
+	METHOD_ADD(api::ToSha256, "/sha256?message={}", Get, "dev_only");
 	// Who Am I?
 	METHOD_ADD(api::Whoami, "/whoami", Get,"login_filter");
 #endif
@@ -87,9 +87,9 @@ public:
   drogon::Task<HttpResponsePtr> CreateShop(HttpRequestPtr req);
   drogon::Task<HttpResponsePtr> GetShops(HttpRequestPtr req);
   drogon::Task<HttpResponsePtr> CreateProduct(HttpRequestPtr req);
+	drogon::Task<HttpResponsePtr> Whoami(HttpRequestPtr req);
 	
   // Dev only routes
-	drogon::Task<HttpResponsePtr> Whoami(HttpRequestPtr req);
 	drogon::Task<HttpResponsePtr> ListUsersDevOnly(HttpRequestPtr req);
 	void ToSha256(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback, std::string message);
 };
