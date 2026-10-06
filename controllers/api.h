@@ -43,13 +43,13 @@ public:
 	METHOD_ADD(api::JsonOk, "/", Get);
 
 #ifdef ENABLE_DEBUG_SHOPFRONT
-	// List Users
 	METHOD_ADD(api::ListUsersDevOnly, "/list-users", Get, "dev_only");
-	// To SHA-256
+	METHOD_ADD(api::ListShopsDevOnly, "/list-shops", Get, "dev_only");
+	METHOD_ADD(api::ListProductsDevOnly, "/list-products", Get, "dev_only");
 	METHOD_ADD(api::ToSha256, "/sha256?message={}", Get, "dev_only");
+#endif
 	// Who Am I?
 	METHOD_ADD(api::Whoami, "/whoami", Get,"login_filter");
-#endif
 
 	// User Registration
 	METHOD_ADD(api::CreateUser, "/register", Post,"no_login_filter");
@@ -91,5 +91,7 @@ public:
 	
   // Dev only routes
 	drogon::Task<HttpResponsePtr> ListUsersDevOnly(HttpRequestPtr req);
+	drogon::Task<HttpResponsePtr> ListShopsDevOnly(HttpRequestPtr req);
+	drogon::Task<HttpResponsePtr> ListProductsDevOnly(HttpRequestPtr req);
 	void ToSha256(const HttpRequestPtr &req, std::function<void (const HttpResponsePtr &)> &&callback, std::string message);
 };
