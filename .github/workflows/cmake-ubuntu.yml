@@ -3,10 +3,10 @@
 name: CMake on a single platform
 
 on:
-  push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+  workflow_run:
+    workflows: ["CodeQL Advanced"]
+    types:
+      - completed
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
@@ -23,6 +23,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Check CodeQL Status
+      if: ${{ github.event.workflow_run.conclusion != 'success' }}
+      run: |
+        echo "Error: CodeQL security scan failed or did not succeed. Halting CI/CD pipeline."
+        exit 1
+    
     - uses: actions/checkout@v7
         
     - name: Install and cache system dependencies
