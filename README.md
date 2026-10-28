@@ -4,7 +4,7 @@ Shopfront is a multi-tenant Software-as-a-Service (SaaS) platform targeted at pr
 
 This is a **portfolio project** designed to simulate real-world expectations. AI assistance was used in some cases to save time, but was thoroughly reviewed.
 
-[![CMake CI Build](https://github.com/tyqualters/shopfront/actions/workflows/cmake-single-platform.yml/badge.svg)](https://github.com/tyqualters/shopfront/actions/workflows/cmake-single-platform.yml)
+[![CMake CI Build](https://github.com/tyqualters/shopfront/actions/workflows/cmake-ubuntu.yml/badge.svg)](https://github.com/tyqualters/shopfront/actions/workflows/cmake-ubuntu.yml)
 
 ## Tech Stack
 
