@@ -72,6 +72,7 @@ public:
 	
 	// Product/Item Details
 	METHOD_ADD(api::CreateProduct, "/register-product", Post, "login_filter");
+  METHOD_ADD(api::GetProduct, "/products", Get);
 	
 	// Order Details (Get), Place Order (Post)
 	METHOD_ADD(api::JsonOk, "/order", Get, Post);
@@ -87,6 +88,7 @@ public:
   drogon::Task<HttpResponsePtr> CreateShop(HttpRequestPtr req);
   drogon::Task<HttpResponsePtr> GetShops(HttpRequestPtr req);
   drogon::Task<HttpResponsePtr> CreateProduct(HttpRequestPtr req);
+  drogon::Task<HttpResponsePtr> GetProduct(HttpRequestPtr req);
 	drogon::Task<HttpResponsePtr> Whoami(HttpRequestPtr req);
 	
   // Dev only routes

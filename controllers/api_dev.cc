@@ -36,7 +36,7 @@ drogon::Task<HttpResponsePtr> api::ListUsersDevOnly(HttpRequestPtr req)
 		for (const auto &user : users)
 		{
 			// append user
-			usersArray.append(user.getValueOfUsername());
+			usersArray.append(user.toJson());
 		}
 		ret["users"] = usersArray;
 
@@ -78,7 +78,7 @@ drogon::Task<HttpResponsePtr> api::ListShopsDevOnly(HttpRequestPtr req)
 		for (const auto &shop : shops)
 		{
 			// append shop
-			shopsArray.append(shop.getValueOfShopname());
+			shopsArray.append(shop.toJson());
 		}
 		ret["shops"] = shopsArray;
 
@@ -120,7 +120,7 @@ drogon::Task<HttpResponsePtr> api::ListProductsDevOnly(HttpRequestPtr req)
 		for (const auto &product : products)
 		{
 			// append product
-			productsArray.append(product.getValueOfProductname());
+			productsArray.append(product.toJson());
 		}
 		ret["products"] = productsArray;
 

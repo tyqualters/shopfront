@@ -26,9 +26,9 @@ This is a **portfolio project** designed to simulate real-world expectations. AI
 
 1. Create [Drogon](https://github.com/drogonframework/drogon) Project **(COMPLETED VERSION 0.0.1)**
 2. Set up user authentication (very basic) **(COMPLETED VERSION 0.0.1)**
-3. Build endpoint routes **(IN PROGRESS)**
+3. Build endpoint routes **(MARKED COMPLETED VERSION 0.0.1)**
 4. Build the [frontend (React)](https://github.com/tyqualters/shopfront-react) **(IN PROGRESS)**
-5. Build in Shop multi-tenancy **(IN PROGRESS)**
+5. Build in Shop multi-tenancy **(MARKED COMPLETED VERSION 0.0.1)**
 6. Add documentation with [mdBook](https://github.com/rust-lang/mdBook)
 7. Add [Google Test (gtest)](https://github.com/google/googletest) and create unit and integration tests
 8. Fail CI pipeline for security checks

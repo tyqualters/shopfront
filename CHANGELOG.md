@@ -18,9 +18,10 @@ TASK LIST:
 - [x] Env vars for DBs
 - [x] Come up with an official name for the project
 - [x] Build dashboard endpoint
-- [x] add /api endpoint for shop selection
-- [ ] add /api endpoint for product selection
-- [ ] **WIP:** Build endpoint routes **(MILESTONE)**
+- [x] Add /api endpoint for shop selection
+- [x] Add /api endpoint for product selection
+- [x] Build endpoint routes **(MILESTONE)**
+- [ ] Complete CRUD
 - [ ] **WIP:** Build the frontend (React) **(MILESTONE)**
 
 DEFERRED TASK LIST:

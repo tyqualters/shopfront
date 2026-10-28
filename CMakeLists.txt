@@ -28,7 +28,7 @@ endif()
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # Miscellaneous Settings
-set(YAML_BUILD_SHARED_LIBS BUILD_SHARED_LIBS CACHE BOOL "Yaml Build Shared Libs" FORCE)
+set(YAML_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS} CACHE BOOL "Yaml Build Shared Libs" FORCE)
 set(JWT_BUILD_EXAMPLES OFF CACHE BOOL "disable building examples" FORCE)
 set(BUILD_EXAMPLES OFF CACHE BOOL "Disable dependency examples" FORCE)
 set(USE_MYSQL ON CACHE BOOL "Enable Mysql" FORCE)

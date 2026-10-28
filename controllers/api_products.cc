@@ -95,3 +95,78 @@ drogon::Task<HttpResponsePtr> api::CreateProduct(HttpRequestPtr req)
 		);
 	}
 }
+
+/*
+ * Get products. Requires shopId. Optional productId. 
+ **/
+drogon::Task<HttpResponsePtr> api::GetProduct(HttpRequestPtr req)
+{
+
+	using namespace drogon_model::shopfront_db;
+  using drogon::orm::Criteria;
+
+  // Get Mariadb client
+  auto client = GetClient();
+
+  try {
+    // Parameters
+    const std::string &productId_s = req->getParameter("productid");
+    const std::string &shopId_s = req->getParameter("shopid");
+  
+    if(shopId_s.empty())
+    {
+      co_return drogon::HttpResponse::newHttpJsonResponse(
+          JsonStandardError("No shop ID specified")
+          );
+    }
+
+    int32_t shopId = std::stoi(shopId_s), productId = !productId_s.empty() ? std::stoi(productId_s) : -1;
+
+    // ORM for Products and Shops
+    drogon::orm::CoroMapper<Products> mp(client);
+    
+    Json::Value ret = JsonStandardOk();
+
+		Json::Value productsArray(Json::arrayValue);
+    if (productId == -1)
+    {
+      std::vector<Products> products = co_await mp.findBy({Products::Cols::_shopId, orm::CompareOperator::EQ, shopId});
+      for(auto& product: products)
+      {
+        productsArray.append(product.toJson());
+      }
+      // Return all products
+    }
+    else
+    {
+      std::vector<Products> products = co_await mp.findBy((Criteria(Products::Cols::_shopId, orm::CompareOperator::EQ, shopId)&&Criteria(Products::Cols::_productId, orm::CompareOperator::EQ, productId)));
+      for(auto& product: products)
+      {
+        productsArray.append(product.toJson());
+      }
+      // Return a specific product
+    }
+
+    ret["products"] = productsArray;
+
+    co_return drogon::HttpResponse::newHttpJsonResponse(
+        ret
+    );
+  }
+	catch (const drogon::orm::DrogonDbException &e)
+	{
+    // Database error (Mariadb)
+		LOG_ERROR << "Error: " << e.base().what();
+
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			JsonStandardError()
+		);
+	}
+	catch (const std::exception &e)
+	{
+    // General exception
+		co_return drogon::HttpResponse::newHttpJsonResponse(
+			JsonStandardError(e.what())	
+		);
+	}
+}
