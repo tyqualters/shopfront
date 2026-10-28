@@ -18,10 +18,6 @@ This is a **portfolio project** designed to simulate real-world expectations. AI
 - Bash (Automation)
 - GitHub Actions (CI) (TODO: CD for AWS)
 
-## License
-
-&copy; 2026 Ty Qualters. All rights reserved.
-
 ## Ideas and Milestones
 
 1. Create [Drogon](https://github.com/drogonframework/drogon) Project **(COMPLETED VERSION 0.0.1)**
@@ -31,14 +27,12 @@ This is a **portfolio project** designed to simulate real-world expectations. AI
 5. Build in Shop multi-tenancy **(MARKED COMPLETED VERSION 0.0.1)**
 6. Add documentation with [mdBook](https://github.com/rust-lang/mdBook)
 7. Add [Google Test (gtest)](https://github.com/google/googletest) and create unit and integration tests
-8. Fail CI pipeline for security checks
+8. Fail CI pipeline for security checks **(MARKED COMPLETED VERSION 0.0.1)**
 9. CD for AWS (ECS)
 10. Multi-user + Multi-role Integration
 11. PayPal or Stripe integration
 
 ## Version Tracking
-
-Current version: see [CMakeLists.txt](https://github.com/tyqualters/shopfront/blob/master/CMakeLists.txt).
 
 Changes: see [CHANGELOG.md](https://github.com/tyqualters/shopfront/blob/master/CHANGELOG.md).
 
@@ -50,4 +44,4 @@ To report bugs in [GitHub Issues](https://github.com/tyqualters/shopfront/issues
 
 Documentation is written in Markdown and can be compiled with [mdBook](https://github.com/rust-lang/mdBook).
 
-Live documentation at [GitHub.io](https://tyqualters.github.io/shopfront).
+Live documentation at [GitHub.io](https://tyqualters.github.io/shopfront-docs).

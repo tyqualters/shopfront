@@ -21,6 +21,8 @@ TASK LIST:
 - [x] Add /api endpoint for shop selection
 - [x] Add /api endpoint for product selection
 - [x] Build endpoint routes **(MILESTONE)**
+- [x] CI Security
+- [x] Shop Multi-tenancy **(MILESTONE)**
 - [ ] Complete CRUD
 - [ ] **WIP:** Build the frontend (React) **(MILESTONE)**
 
@@ -42,3 +44,5 @@ NOTES:
 - Server-side Authentication: HTTP-only secure cookie with JWE token (`userId`, `exp`, and `jti`=UUID)
 - Client-side Authentication: Normal cookie with Unix timestamp
 - Redis holds `jti` and expires at the same time
+- Multi-tenancy is achieved through React. Not functional on 10-27-26 but marked complete anyway.
+- Secret Scanning achieved internally through GitHub.
